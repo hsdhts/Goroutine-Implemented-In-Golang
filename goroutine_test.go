@@ -64,3 +64,23 @@ func Transfer(user1 *UserBalance, user2 *UserBalance, amount int) {
 	user1.Unlock()
 	user2.Unlock()
 }
+
+func TestDeadlock(t *testing.T) {
+	user1 := UserBalance{
+		Name:    "Batman",
+		Balance: 1000000,
+	}
+
+	user2 := UserBalance{
+		Name:    "Spiderman",
+		Balance: 1000000,
+	}
+
+	go Transfer(&user1, &user2, 100000)
+	go Transfer(&user2, &user1, 200000)
+
+	time.Sleep(2 * time.Second)
+
+	fmt.Println("User", user1.Name, "Balance", user1.Balance)
+	fmt.Println("User", user2.Name, "Balance", user2.Balance)
+}
